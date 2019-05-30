@@ -1,43 +1,120 @@
-type User {
-  id: ID!
-  name: String
-  friends: [User] @relation(name: "FRIENDS", direction: "BOTH")
-  reviews: [Review] @relation(name: "WROTE", direction: "OUT")
-  avgStars: Float
-    @cypher(
-      statement: "MATCH (this)-[:WROTE]->(r:Review) RETURN toFloat(avg(r.stars))"
-    )
-  numReviews: Int
-    @cypher(statement: "MATCH (this)-[:WROTE]->(r:Review) RETURN COUNT(r)")
+type Department {
+    code: ID!
+    name: String!
+    faculty: String
+    branches: [Branch] @relation(name: "IS_PARENT_OF", direction: OUT)
+    grandtopics: [GrandTopic] @relation(name: "IS_PARENT_OF", direction: OUT)
 }
 
-type Business {
-  id: ID!
-  name: String
-  address: String
-  city: String
-  state: String
-  reviews: [Review] @relation(name: "REVIEWS", direction: "IN")
-  categories: [Category] @relation(name: "IN_CATEGORY", direction: "OUT")
+type Branch {
+    code: ID!
+    name: String!
+    department:[Department] @relation(name: "IS_PARENT_OF", direction: IN)
+    grandtopics: [GrandTopic] @relation(name: "IS_PARENT_OF", direction: OUT)
 }
 
-type Review {
-  id: ID!
-  stars: Int
-  text: String
-  date: Date
-  business: Business @relation(name: "REVIEWS", direction: "OUT")
-  user: User @relation(name: "WROTE", direction: "IN")
+type GrandTopic {
+    code: ID!
+    name: String!
+    faculty: String
+    branch: [Branch] @relation(name: "IS_PARENT_OF", direction: IN)
+    topics(limit: Int = 10): [Topic] @relation(name: "IS_PARENT_OF", direction: OUT)
 }
 
-type Category {
-  name: ID!
-  businesses: [Business] @relation(name: "IN_CATEGORY", direction: "IN")
+type Topic {
+    code: ID!
+    name: String!
+    branch: [Branch] @relation(name: "IS_PARENT_OF", direction: IN)
+    grandtopic: [Branch] @relation(name: "IS_PARENT_OF", direction: IN)
+    subtopics(limit: Int = 10): [Topic] @relation(name: "IS_PARENT_OF", direction: OUT)
 }
 
-type Query {
-  usersBySubstring(substring: String): [User]
-    @cypher(
-      statement: "MATCH (u:User) WHERE u.name CONTAINS $substring RETURN u"
-    )
+type SubTopic {
+    code: ID!
+    name: String!
+    topic:[Topic] @relation(name: "CONTAINS", direction: IN)
+    questions: [Question] @relation(name: "IS_ASSESSMENT_OF", direction: OUT)
+    content: [Content] @relation(name: "HAS_CONTENT", direction: OUT)
+}
+
+type Content {
+    code: ID!
+    name: String!
+    topic: [Topic] @relation(name: "HAS_CONTENT", direction: IN)
+}
+
+type Question {
+    code: ID!
+    name: String!
+    solution: String
+    difficulty_level: Int
+    hint: String
+    option:[Option] @relation(name: "IS_OPTION", direction: OUT)
+  }
+
+type Is_Topic_Assesment_Of @relation(name: "IS_ASSESMENT_OF") {
+    from: Topic
+    to: Question
+    blooms_level: Int
+}
+
+type Is_Subtopic_Assesment_Of @relation(name: "IS_ASSESMENT_OF") {
+     from: SubTopic
+     to: Question
+     blooms_level: Int
+}
+
+type Option {
+    code: ID!
+    name: String!
+}
+ 
+type Is_Option @relation(name: "IS_OPTION") {
+     from: Question
+     to: Option
+     is_right: Int
+}
+
+type Source {
+     code: ID!
+     name: String!
+     question: [Question] @relation(name: "IS_SOURCE_OF", direction: IN)
+}
+
+type Learning_Content {
+     code: ID!
+     name: String!
+     contenttype: Int
+     topic: [Topic] @relation(name: "HAS_CONTENT", direction: IN)
+     subtopic: [Topic] @relation(name: "HAS_CONTENT", direction: IN)
+}
+
+type Application {
+     code: ID!
+     name: String!
+     topic: [Topic] @relation(name: "HAS_APPLICATION", direction: IN)
+     subtopic: [Topic] @relation(name: "HAS_APPLICATION", direction: IN)
+}
+
+type Outcome {
+     code: ID!
+     name: String!
+     branch: [Branch] @relation(name: "HAS_OUTCOMES", direction: IN)
+     grandtopic: [GrandTopic] @relation(name: "HAS_OUTCOMES", direction: IN)
+     topic: [Topic] @relation(name: "HAS_OUTCOMES", direction: IN)
+}
+
+type Objective {
+     code: ID!
+     name: String!
+     branch: [Branch] @relation(name: "HAS_OBJECTIVES", direction: IN)
+     grandtopic: [GrandTopic] @relation(name: "HAS_OBJECTIVES", direction: IN)
+     topic: [Topic] @relation(name: "HAS_OBJEVTIVES", direction: IN)
+}
+
+type Assignment {
+     code: ID!
+     name: String!
+     topic: [Topic] @relation(name: "HAS_ASSIGNMENT", direction: IN)
+     subtopic: [Topic] @relation(name: "HAS_ASSIGNMENT", direction: IN)
 }
