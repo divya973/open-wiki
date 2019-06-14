@@ -2,6 +2,7 @@ type Department {
     code: ID!
     name: String!
     faculty: String
+    img: String
     branches: [Branch] @relation(name: "IS_PARENT_OF", direction: OUT)
     grandtopics: [GrandTopic] @relation(name: "IS_PARENT_OF", direction: OUT)
 }
@@ -9,6 +10,7 @@ type Department {
 type Branch {
     code: ID!
     name: String!
+    img: String
     department:[Department] @relation(name: "IS_PARENT_OF", direction: IN)
     grandtopics: [GrandTopic] @relation(name: "IS_PARENT_OF", direction: OUT)
 }
@@ -17,6 +19,8 @@ type GrandTopic {
     code: ID!
     name: String!
     faculty: String
+    img: String
+    description: String
     branch: [Branch] @relation(name: "IS_PARENT_OF", direction: IN)
     topics(limit: Int = 10): [Topic] @relation(name: "IS_PARENT_OF", direction: OUT)
 }
@@ -24,6 +28,7 @@ type GrandTopic {
 type Topic {
     code: ID!
     name: String!
+    description: String
     branch: [Branch] @relation(name: "IS_PARENT_OF", direction: IN)
     grandtopic: [Branch] @relation(name: "IS_PARENT_OF", direction: IN)
     subtopics(limit: Int = 10): [Topic] @relation(name: "IS_PARENT_OF", direction: OUT)
@@ -32,6 +37,7 @@ type Topic {
 type SubTopic {
     code: ID!
     name: String!
+    description: String
     topic:[Topic] @relation(name: "CONTAINS", direction: IN)
     questions: [Question] @relation(name: "IS_ASSESSMENT_OF", direction: OUT)
     content: [Content] @relation(name: "HAS_CONTENT", direction: OUT)
