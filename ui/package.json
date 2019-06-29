@@ -1,46 +1,37 @@
 {
-  "name": "grand-stack-starter-ui",
-  "version": "0.0.1",
-  "description": "UI app for GRANDstack",
-  "dependencies": {
-    "@material-ui/core": "^3.6.0",
-    "@material-ui/icons": "^3.0.1",
-    "apollo-boost": "^0.1.22",
-    "graphql": "^14.0.2",
-    "graphql-tag": "^2.10.0",
-    "prettier": "^1.15.2",
-    "react": "^16.6.3",
-    "react-apollo": "^2.3.2",
-    "react-dom": "^16.6.3",
-    "react-scripts": "^2.1.1",
-    "serve": "^10.1.1"
-  },
+  "name": "create-react-app",
+  "version": "4.0.0",
+  "private": true,
   "scripts": {
-    "start": "react-scripts start",
+    "start": "SKIP_PREFLIGHT_CHECK=true react-scripts start & json-server --watch store.json --port 3004",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "now-start": "serve build/"
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
-  "devDependencies": {
-    "husky": "^1.2.0",
-    "lint-staged": "^8.1.0"
+  "dependencies": {
+    "@material-ui/core": "latest",
+    "@material-ui/icons": "^4.2.0",
+    "clsx": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "latest",
+    "recompose": "^0.30.0",
+    "styled-components": "^4.3.1"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{js,json,css,md,graphql}": [
-      "prettier --write",
-      "git add"
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
     ]
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "devDependencies": {
+    "json-server": "^0.15.0"
+  }
 }
