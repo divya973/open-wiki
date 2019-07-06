@@ -6,11 +6,3 @@ services:
     ports:
       - 4000:4000
 
-  ui:
-    build: ./ui
-    ports:
-      - 3000:3000
-    links:
-    - api
-    depends_on:
-    - api
