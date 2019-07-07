@@ -28,6 +28,12 @@ type GBranch {
     content: [Content] @relation(name: "HAS_CONTENT", direction: OUT)
     assignments: [Assignment] @relation(name: "HAS_ASSIGNMENT", direction: OUT)
     applications: [Application] @relation(name: "HAS_APPLICATION", direction: OUT)
+    prepare: [GBranch]  @cypher(
+        statement: """MATCH p = (this)-[r:IS_PREREQUISITE_OF*1..3]->(x)
+				RETURN x.name as name,x.code as code, labels(x)[0] as type""")
+    advance: [GBranch] @cypher(
+	statement: """MATCH p = (x)-[r:IS_PREREQUISITE_OF*1..3]->(this)
+                                RETURN x.name as name, x.code as code, labels(x)[0] as type""")
 }
 
 type GGrandtopic {
@@ -75,6 +81,12 @@ type GTopic {
     content: [Content] @relation(name: "HAS_CONTENT", direction: OUT)
     assignments: [Assignment] @relation(name: "HAS_ASSIGNMENT", direction: OUT)
     applications: [Application] @relation(name: "HAS_APPLICATION", direction: OUT)
+    prepare: [GTopic]  @cypher(
+        statement: """MATCH p = (this)-[r:IS_PREREQUISITE_OF*1..3]->(x)
+                                RETURN x.name as name,x.code as code, labels(x)[0] as type""")
+    advance: [GTopic] @cypher(
+        statement: """MATCH p = (x)-[r:IS_PREREQUISITE_OF*1..3]->(this)
+                                RETURN x.name as name, x.code as code, labels(x)[0] as type""")
 }
 
 type GSubtopic {
