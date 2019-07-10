@@ -2,6 +2,7 @@ type GDepartment {
     code: ID!
     name: String!
     faculty: String
+    type: String
     image: String
     description: String
     branches: [GBranch] @relation(name: "IS_PARENT_OF", direction: OUT)
@@ -12,6 +13,7 @@ type GBranch {
     code: ID!
     name: String!
     image: String
+    type: String
     description: String
     department:[GDepartment] @relation(name: "IS_PARENT_OF", direction: IN)
     grandtopics: [GGrandtopic] @relation(name: "IS_PARENT_OF", direction: OUT)
@@ -30,10 +32,10 @@ type GBranch {
     applications: [Application] @relation(name: "HAS_APPLICATION", direction: OUT)
     prepare: [GBranch]  @cypher(
         statement: """MATCH p = (this)-[r:IS_PREREQUISITE_OF*1..3]->(x)
-				RETURN x.name as name,x.code as code, labels(x)[0] as type""")
+				RETURN x""")
     advance: [GBranch] @cypher(
 	statement: """MATCH p = (x)-[r:IS_PREREQUISITE_OF*1..3]->(this)
-                                RETURN x.name as name, x.code as code, labels(x)[0] as type""")
+                                RETURN x""")
 }
 
 type GGrandtopic {
@@ -41,6 +43,7 @@ type GGrandtopic {
     name: String!
     faculty: String
     image: String
+    type: String
     description: String
     branch: [GBranch] @relation(name: "IS_PARENT_OF", direction: IN)
     topics: [GTopic] @relation(name: "IS_PARENT_OF", direction: OUT)
@@ -57,12 +60,19 @@ type GGrandtopic {
     content: [Content] @relation(name: "HAS_CONTENT", direction: OUT)
     assignments: [Assignment] @relation(name: "HAS_ASSIGNMENT", direction: OUT)
     applications: [Application] @relation(name: "HAS_APPLICATION", direction: OUT)
+    prepare: [GGrandtopic]  @cypher(
+        statement: """MATCH p = (this)-[r:IS_PREREQUISITE_OF*1..3]->(x)
+                                RETURN x""")
+    advance: [GGrandtopic] @cypher(
+        statement: """MATCH p = (x)-[r:IS_PREREQUISITE_OF*1..3]->(this)
+                                RETURN x""")
 }
 
 type GTopic {
     code: ID!
     name: String!
     image: String
+    type: String
     description: String
     branch: [GBranch] @relation(name: "IS_PARENT_OF", direction: IN)
     grandtopic: [GGrandtopic] @relation(name: "IS_PARENT_OF", direction: IN)
@@ -83,10 +93,10 @@ type GTopic {
     applications: [Application] @relation(name: "HAS_APPLICATION", direction: OUT)
     prepare: [GTopic]  @cypher(
         statement: """MATCH p = (this)-[r:IS_PREREQUISITE_OF*1..3]->(x)
-                                RETURN x.name as name,x.code as code, labels(x)[0] as type""")
+                                RETURN x""")
     advance: [GTopic] @cypher(
         statement: """MATCH p = (x)-[r:IS_PREREQUISITE_OF*1..3]->(this)
-                                RETURN x.name as name, x.code as code, labels(x)[0] as type""")
+                                RETURN x""")
 }
 
 type GSubtopic {
@@ -94,6 +104,7 @@ type GSubtopic {
     name: String!
     image: String
     description: String
+    type: String
     topic:[GTopic] @relation(name: "IS_PARENT_OF", direction: IN)
     questions: [Question] @relation(name: "IS_ASSESSMENT_OF", direction: OUT)
     prerequisite_branches: [GBranch] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
@@ -109,6 +120,12 @@ type GSubtopic {
     content: [Content] @relation(name: "HAS_CONTENT", direction: OUT)
     assignments: [Assignment] @relation(name: "HAS_ASSIGNMENT", direction: OUT)
     applications: [Application] @relation(name: "HAS_APPLICATION", direction: OUT)
+    prepare: [GSubtopic]  @cypher(
+        statement: """MATCH p = (this)-[r:IS_PREREQUISITE_OF*1..3]->(x)
+                                RETURN x""")
+    advance: [GSubtopic] @cypher(
+        statement: """MATCH p = (x)-[r:IS_PREREQUISITE_OF*1..3]->(this)
+                                RETURN x""")
 }
 
 type Question {
