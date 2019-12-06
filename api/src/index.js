@@ -40,7 +40,9 @@ const driver = neo4j.driver(
  */
 const server = new ApolloServer({
   context: { driver },
-  schema: schema
+  schema: schema,
+  introspection: true, // enables introspection of the schema
+  playground: true, // enables the actual playground
 });
 
 server.listen(process.env.GRAPHQL_LISTEN_PORT, "0.0.0.0").then(({ url }) => {
