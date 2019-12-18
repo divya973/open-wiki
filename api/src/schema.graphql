@@ -1,236 +1,304 @@
 type GDepartment {
-    code: ID!
-    name: String!
-    faculty: String
-    type: String
-    image: String
-    description: String
-    branches: [GBranch] @relation(name: "IS_PARENT_OF", direction: OUT)
-    grandtopics: [GGrandtopic] @relation(name: "IS_PARENT_OF", direction: OUT)
+  code: ID!
+  name: String!
+  faculty: String
+  type: String
+  image: String
+  description: String
+  branches: [GBranch] @relation(name: "IS_PARENT_OF", direction: OUT)
+  grandtopics: [GGrandtopic] @relation(name: "IS_PARENT_OF", direction: OUT)
 }
 
 type GBranch {
-    code: ID!
-    name: String!
-    image: String
-    type: String
-    description: String
-    department:[GDepartment] @relation(name: "IS_PARENT_OF", direction: IN)
-    grandtopics: [GGrandtopic] @relation(name: "IS_PARENT_OF", direction: OUT)
-    prerequisite_branches: [GBranch] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    prerequisite_grandtopics: [GGrandtopic] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    prerequisite_topics: [GTopic] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    prerequisite_subtopics: [GSubtopic] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    relate_branches: [GBranch] @relation(name: "IS_RELATED", direction: OUT)
-    relate_grandtopics: [GGrandtopic] @relation(name: "IS_RELATED", direction: OUT)
-    relate_topics: [GTopic] @relation(name: "IS_RELATED", direction: OUT)
-    relate_subtopics: [GSubtopic] @relation(name: "IS_RELATED", direction: OUT)
-    outcomes: [Outcome] @relation(name: "HAS_OUTCOMES", direction: OUT)
-    objectives: [Objective] @relation(name: "HAS_OBJECTIVES", direction: OUT)
-    content: [Content] @relation(name: "HAS_CONTENT", direction: OUT)
-    assignments: [Assignment] @relation(name: "HAS_ASSIGNMENT", direction: OUT)
-    applications: [Application] @relation(name: "HAS_APPLICATION", direction: OUT)
-    advance: [GBranch]  @cypher(
-        statement: """MATCH p = (this)-[r:IS_PREREQUISITE_OF]->(x)
-				RETURN x""")
-    prepare: [GBranch] @cypher(
-	statement: """MATCH p = (x)-[r:IS_PREREQUISITE_OF]->(this)
-                                RETURN x""")
-    relate: [GBranch] @cypher(
-        statement: """MATCH p = (this)-[r:IS_RELATED]->(x)
-                                RETURN x""")
+  code: ID!
+  name: String!
+  image: String
+  type: String
+  description: String
+  department: [GDepartment] @relation(name: "IS_PARENT_OF", direction: IN)
+  grandtopics: [GGrandtopic] @relation(name: "IS_PARENT_OF", direction: OUT)
+  prerequisite_branches: [GBranch]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  prerequisite_grandtopics: [GGrandtopic]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  prerequisite_topics: [GTopic]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  prerequisite_subtopics: [GSubtopic]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  relate_branches: [GBranch] @relation(name: "IS_RELATED", direction: OUT)
+  relate_grandtopics: [GGrandtopic]
+    @relation(name: "IS_RELATED", direction: OUT)
+  relate_topics: [GTopic] @relation(name: "IS_RELATED", direction: OUT)
+  relate_subtopics: [GSubtopic] @relation(name: "IS_RELATED", direction: OUT)
+  outcomes: [Outcome] @relation(name: "HAS_OUTCOMES", direction: OUT)
+  objectives: [Objective] @relation(name: "HAS_OBJECTIVES", direction: OUT)
+  content: [Content] @relation(name: "HAS_CONTENT", direction: OUT)
+  assignments: [Assignment] @relation(name: "HAS_ASSIGNMENT", direction: OUT)
+  applications: [Application] @relation(name: "HAS_APPLICATION", direction: OUT)
+  advance: [GBranch]
+    @cypher(
+      statement: """
+      MATCH p = (this)-[r:IS_PREREQUISITE_OF]->(x)
+      RETURN x
+      """
+    )
+  prepare: [GBranch]
+    @cypher(
+      statement: """
+      MATCH p = (x)-[r:IS_PREREQUISITE_OF]->(this)
+      RETURN x
+      """
+    )
+  relate: [GBranch]
+    @cypher(
+      statement: """
+      MATCH p = (this)-[r:IS_RELATED]->(x)
+      RETURN x
+      """
+    )
 }
 
 type GGrandtopic {
-    code: ID!
-    name: String!
-    faculty: String
-    image: String
-    type: String
-    description: String
-    branch: [GBranch] @relation(name: "IS_PARENT_OF", direction: IN)
-    topics: [GTopic] @relation(name: "IS_PARENT_OF", direction: OUT)
-    prerequisite_branches: [GBranch] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    prerequisite_grandtopics: [GGrandtopic] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    prerequisite_topics: [GTopic] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    prerequisite_subtopics: [GSubtopic] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    relate_branches: [GBranch] @relation(name: "IS_RELATED", direction: OUT)
-    relate_grandtopics: [GGrandtopic] @relation(name: "IS_RELATED", direction: OUT)
-    relate_topics: [GTopic] @relation(name: "IS_RELATED", direction: OUT)
-    relate_subtopics: [GSubtopic] @relation(name: "IS_RELATED", direction: OUT)
-    outcomes: [Outcome] @relation(name: "HAS_OUTCOMES", direction: OUT)
-    objectives: [Objective] @relation(name: "HAS_OBJECTIVES", direction: OUT)
-    content: [Content] @relation(name: "HAS_CONTENT", direction: OUT)
-    assignments: [Assignment] @relation(name: "HAS_ASSIGNMENT", direction: OUT)
-    applications: [Application] @relation(name: "HAS_APPLICATION", direction: OUT)
-    advance: [GGrandtopic]  @cypher(
-        statement: """MATCH p = (this)-[r:IS_PREREQUISITE_OF]->(x)
-                                RETURN x""")
-    prepare: [GGrandtopic] @cypher(
-        statement: """MATCH p = (x)-[r:IS_PREREQUISITE_OF]->(this)
-                                RETURN x""")
-    relate: [GGrandtopic] @cypher(
-        statement: """MATCH p = (this)-[r:IS_RELATED]->(x)
-                                RETURN x""")
+  code: ID!
+  name: String!
+  faculty: String
+  image: String
+  type: String
+  description: String
+  branch: [GBranch] @relation(name: "IS_PARENT_OF", direction: IN)
+  topics: [GTopic] @relation(name: "IS_PARENT_OF", direction: OUT)
+  prerequisite_branches: [GBranch]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  prerequisite_grandtopics: [GGrandtopic]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  prerequisite_topics: [GTopic]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  prerequisite_subtopics: [GSubtopic]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  relate_branches: [GBranch] @relation(name: "IS_RELATED", direction: OUT)
+  relate_grandtopics: [GGrandtopic]
+    @relation(name: "IS_RELATED", direction: OUT)
+  relate_topics: [GTopic] @relation(name: "IS_RELATED", direction: OUT)
+  relate_subtopics: [GSubtopic] @relation(name: "IS_RELATED", direction: OUT)
+  outcomes: [Outcome] @relation(name: "HAS_OUTCOMES", direction: OUT)
+  objectives: [Objective] @relation(name: "HAS_OBJECTIVES", direction: OUT)
+  content: [Content] @relation(name: "HAS_CONTENT", direction: OUT)
+  assignments: [Assignment] @relation(name: "HAS_ASSIGNMENT", direction: OUT)
+  applications: [Application] @relation(name: "HAS_APPLICATION", direction: OUT)
+  advance: [GGrandtopic]
+    @cypher(
+      statement: """
+      MATCH p = (this)-[r:IS_PREREQUISITE_OF]->(x)
+      RETURN x
+      """
+    )
+  prepare: [GGrandtopic]
+    @cypher(
+      statement: """
+      MATCH p = (x)-[r:IS_PREREQUISITE_OF]->(this)
+      RETURN x
+      """
+    )
+  relate: [GGrandtopic]
+    @cypher(
+      statement: """
+      MATCH p = (this)-[r:IS_RELATED]->(x)
+      RETURN x
+      """
+    )
 }
 
 type GTopic {
-    code: ID!
-    name: String!
-    image: String
-    type: String
-    description: String
-    branch: [GBranch] @relation(name: "IS_PARENT_OF", direction: IN)
-    grandtopic: [GGrandtopic] @relation(name: "IS_PARENT_OF", direction: IN)
-    subtopics: [GSubtopic] @relation(name: "IS_PARENT_OF", direction: OUT)
-    questions: [Question] @relation(name: "IS_ASSESSMENT_OF", direction: OUT)
-    prerequisite_branches: [GBranch] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    prerequisite_grandtopics: [GGrandtopic] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    prerequisite_topics: [GTopic] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    prerequisite_subtopics: [GSubtopic] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    relate_branches: [GBranch] @relation(name: "IS_RELATED", direction: OUT)
-    relate_grandtopics: [GGrandtopic] @relation(name: "IS_RELATED", direction: OUT)
-    relate_topics: [GTopic] @relation(name: "IS_RELATED", direction: OUT)
-    relate_subtopics: [GSubtopic] @relation(name: "IS_RELATED", direction: OUT)
-    outcomes: [Outcome] @relation(name: "HAS_OUTCOMES", direction: OUT)
-    objectives: [Objective] @relation(name: "HAS_OBJECTIVES", direction: OUT)
-    content: [Content] @relation(name: "HAS_CONTENT", direction: OUT)
-    assignments: [Assignment] @relation(name: "HAS_ASSIGNMENT", direction: OUT)
-    applications: [Application] @relation(name: "HAS_APPLICATION", direction: OUT)
-    advance: [GTopic]  @cypher(
-        statement: """MATCH p = (this)-[r:IS_PREREQUISITE_OF]->(x)
-                                RETURN x""")
-    prepare: [GTopic] @cypher(
-        statement: """MATCH p = (x)-[r:IS_PREREQUISITE_OF]->(this)
-                                RETURN x""")
-   relate: [GTopic] @cypher(
-        statement: """MATCH p = (this)-[r:IS_RELATED]->(x)
-                                RETURN x""")
+  code: ID!
+  name: String!
+  image: String
+  type: String
+  description: String
+  branch: [GBranch] @relation(name: "IS_PARENT_OF", direction: IN)
+  grandtopic: [GGrandtopic] @relation(name: "IS_PARENT_OF", direction: IN)
+  subtopics: [GSubtopic] @relation(name: "IS_PARENT_OF", direction: OUT)
+  questions: [Question] @relation(name: "IS_ASSESSMENT_OF", direction: OUT)
+  prerequisite_branches: [GBranch]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  prerequisite_grandtopics: [GGrandtopic]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  prerequisite_topics: [GTopic]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  prerequisite_subtopics: [GSubtopic]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  relate_branches: [GBranch] @relation(name: "IS_RELATED", direction: OUT)
+  relate_grandtopics: [GGrandtopic]
+    @relation(name: "IS_RELATED", direction: OUT)
+  relate_topics: [GTopic] @relation(name: "IS_RELATED", direction: OUT)
+  relate_subtopics: [GSubtopic] @relation(name: "IS_RELATED", direction: OUT)
+  outcomes: [Outcome] @relation(name: "HAS_OUTCOMES", direction: OUT)
+  objectives: [Objective] @relation(name: "HAS_OBJECTIVES", direction: OUT)
+  content: [Content] @relation(name: "HAS_CONTENT", direction: OUT)
+  assignments: [Assignment] @relation(name: "HAS_ASSIGNMENT", direction: OUT)
+  applications: [Application] @relation(name: "HAS_APPLICATION", direction: OUT)
+  advance: [GTopic]
+    @cypher(
+      statement: """
+      MATCH p = (this)-[r:IS_PREREQUISITE_OF]->(x)
+      RETURN x
+      """
+    )
+  prepare: [GTopic]
+    @cypher(
+      statement: """
+      MATCH p = (x)-[r:IS_PREREQUISITE_OF]->(this)
+      RETURN x
+      """
+    )
+  relate: [GTopic]
+    @cypher(
+      statement: """
+      MATCH p = (this)-[r:IS_RELATED]->(x)
+      RETURN x
+      """
+    )
 }
 
 type GSubtopic {
-    code: ID!
-    name: String!
-    image: String
-    description: String
-    type: String
-    topic:[GTopic] @relation(name: "IS_PARENT_OF", direction: IN)
-    questions: [Question] @relation(name: "IS_ASSESSMENT_OF", direction: OUT)
-    prerequisite_branches: [GBranch] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    prerequisite_grandtopics: [GGrandtopic] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    prerequisite_topics: [GTopic] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    prerequisite_subtopics: [GSubtopic] @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
-    relate_branches: [GBranch] @relation(name: "IS_RELATED", direction: OUT)
-    relate_grandtopics: [GGrandtopic] @relation(name: "IS_RELATED", direction: OUT)
-    relate_topics: [GTopic] @relation(name: "IS_RELATED", direction: OUT)
-    relate_subtopics: [GSubtopic] @relation(name: "IS_RELATED", direction: OUT)
-    outcomes: [Outcome] @relation(name: "HAS_OUTCOMES", direction: OUT)
-    objectives: [Objective] @relation(name: "HAS_OBJECTIVES", direction: OUT)
-    content: [Content] @relation(name: "HAS_CONTENT", direction: OUT)
-    assignments: [Assignment] @relation(name: "HAS_ASSIGNMENT", direction: OUT)
-    applications: [Application] @relation(name: "HAS_APPLICATION", direction: OUT)
-    advance: [GSubtopic]  @cypher(
-        statement: """MATCH p = (this)-[r:IS_PREREQUISITE_OF]->(x)
-                                RETURN x""")
-    prepare: [GSubtopic] @cypher(
-        statement: """MATCH p = (x)-[r:IS_PREREQUISITE_OF]->(this)
-                                RETURN x""")
-    relate: [GSubtopic] @cypher(
-        statement: """MATCH p = (this)-[r:IS_RELATED]->(x)
-                                RETURN x""")
+  code: ID!
+  name: String!
+  image: String
+  description: String
+  type: String
+  topic: [GTopic] @relation(name: "IS_PARENT_OF", direction: IN)
+  questions: [Question] @relation(name: "IS_ASSESSMENT_OF", direction: OUT)
+  prerequisite_branches: [GBranch]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  prerequisite_grandtopics: [GGrandtopic]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  prerequisite_topics: [GTopic]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  prerequisite_subtopics: [GSubtopic]
+    @relation(name: "IS_PREREQUISITE_OF", direction: OUT)
+  relate_branches: [GBranch] @relation(name: "IS_RELATED", direction: OUT)
+  relate_grandtopics: [GGrandtopic]
+    @relation(name: "IS_RELATED", direction: OUT)
+  relate_topics: [GTopic] @relation(name: "IS_RELATED", direction: OUT)
+  relate_subtopics: [GSubtopic] @relation(name: "IS_RELATED", direction: OUT)
+  outcomes: [Outcome] @relation(name: "HAS_OUTCOMES", direction: OUT)
+  objectives: [Objective] @relation(name: "HAS_OBJECTIVES", direction: OUT)
+  content: [Content] @relation(name: "HAS_CONTENT", direction: OUT)
+  assignments: [Assignment] @relation(name: "HAS_ASSIGNMENT", direction: OUT)
+  applications: [Application] @relation(name: "HAS_APPLICATION", direction: OUT)
+  advance: [GSubtopic]
+    @cypher(
+      statement: """
+      MATCH p = (this)-[r:IS_PREREQUISITE_OF]->(x)
+      RETURN x
+      """
+    )
+  prepare: [GSubtopic]
+    @cypher(
+      statement: """
+      MATCH p = (x)-[r:IS_PREREQUISITE_OF]->(this)
+      RETURN x
+      """
+    )
+  relate: [GSubtopic]
+    @cypher(
+      statement: """
+      MATCH p = (this)-[r:IS_RELATED]->(x)
+      RETURN x
+      """
+    )
 }
 
 type Question {
-    code: ID!
-    name: String!
-    solution: String
-    difficulty_level: Int
-    hint: String
-    option:[Option] @relation(name: "IS_OPTION", direction: OUT)
-  }
+  code: ID!
+  name: String!
+  solution: String
+  difficulty_level: Int
+  hint: String
+  option: [Option] @relation(name: "IS_OPTION", direction: OUT)
+}
 
 type Is_Grandtopic_Assesment_Of @relation(name: "IS_ASSESMENT_OF") {
-    from: GGrandtopic
-    to: Question
-    blooms_level: Int
+  from: GGrandtopic
+  to: Question
+  blooms_level: Int
 }
 
 type Is_Topic_Assesment_Of @relation(name: "IS_ASSESMENT_OF") {
-    from: GTopic
-    to: Question
-    blooms_level: Int
+  from: GTopic
+  to: Question
+  blooms_level: Int
 }
 
 type Is_Subtopic_Assesment_Of @relation(name: "IS_ASSESMENT_OF") {
-     from: GSubtopic
-     to: Question
-     blooms_level: Int
+  from: GSubtopic
+  to: Question
+  blooms_level: Int
 }
 
 type Option {
-    code: ID!
-    name: String!
+  code: ID!
+  name: String!
 }
- 
+
 type Is_Option @relation(name: "IS_OPTION") {
-     from: Question
-     to: Option
-     is_right: Int
+  from: Question
+  to: Option
+  is_right: Int
 }
 
 type Source {
-     code: ID!
-     name: String!
-     question: [Question] @relation(name: "IS_SOURCE_OF", direction: IN)
-     content: [Content] @relation(name: "IS_SOURCE_OF", direction: IN)
+  code: ID!
+  name: String!
+  question: [Question] @relation(name: "IS_SOURCE_OF", direction: IN)
+  content: [Content] @relation(name: "IS_SOURCE_OF", direction: IN)
 }
 
 type Content {
-     name: String!
-     code: String
-     contenttype: String
-     branch: [GBranch] @relation(name: "HAS_CONTENT", direction: IN)
-     grandtopic: [GGrandtopic] @relation(name: "HAS_CONTENT", direction: IN)
-     topic: [GTopic] @relation(name: "HAS_CONTENT", direction: IN)
-     subtopic: [GSubtopic] @relation(name: "HAS_CONTENT", direction: IN)
+  name: String!
+  code: String
+  contenttype: String
+  branch: [GBranch] @relation(name: "HAS_CONTENT", direction: IN)
+  grandtopic: [GGrandtopic] @relation(name: "HAS_CONTENT", direction: IN)
+  topic: [GTopic] @relation(name: "HAS_CONTENT", direction: IN)
+  subtopic: [GSubtopic] @relation(name: "HAS_CONTENT", direction: IN)
 }
 
 type Application {
-     name: String!
-     code: String
-     contenttype: String
-     branch: [GBranch] @relation(name: "HAS_APPLICATION", direction: IN)
-     grandtopic: [GGrandtopic] @relation(name: "HAS_APPLICATION", direction: IN)
-     topic: [GTopic] @relation(name: "HAS_APPLICATION", direction: IN)
-     subtopic: [GSubtopic] @relation(name: "HAS_APPLICATION", direction: IN)
+  name: String!
+  code: String
+  contenttype: String
+  branch: [GBranch] @relation(name: "HAS_APPLICATION", direction: IN)
+  grandtopic: [GGrandtopic] @relation(name: "HAS_APPLICATION", direction: IN)
+  topic: [GTopic] @relation(name: "HAS_APPLICATION", direction: IN)
+  subtopic: [GSubtopic] @relation(name: "HAS_APPLICATION", direction: IN)
 }
 
 type Outcome {
-     code: ID!
-     name: String!
-     branch: [GBranch] @relation(name: "HAS_OUTCOMES", direction: IN)
-     grandtopic: [GGrandtopic] @relation(name: "HAS_OUTCOMES", direction: IN)
-     topic: [GTopic] @relation(name: "HAS_OUTCOMES", direction: IN)
-     subtopic: [GSubtopic] @relation(name: "HAS_OUTCOMES", direction: IN)
+  code: ID!
+  name: String!
+  branch: [GBranch] @relation(name: "HAS_OUTCOMES", direction: IN)
+  grandtopic: [GGrandtopic] @relation(name: "HAS_OUTCOMES", direction: IN)
+  topic: [GTopic] @relation(name: "HAS_OUTCOMES", direction: IN)
+  subtopic: [GSubtopic] @relation(name: "HAS_OUTCOMES", direction: IN)
 }
 
 type Objective {
-     code: ID!
-     name: String!
-     branch: [GBranch] @relation(name: "HAS_OBJECTIVES", direction: IN)
-     grandtopic: [GGrandtopic] @relation(name: "HAS_OBJECTIVES", direction: IN)
-     topic: [GTopic] @relation(name: "HAS_OBJECTIVES", direction: IN)
-     subtopic: [GSubtopic] @relation(name: "HAS_OBJECTIVES", direction: IN)
+  code: ID!
+  name: String!
+  branch: [GBranch] @relation(name: "HAS_OBJECTIVES", direction: IN)
+  grandtopic: [GGrandtopic] @relation(name: "HAS_OBJECTIVES", direction: IN)
+  topic: [GTopic] @relation(name: "HAS_OBJECTIVES", direction: IN)
+  subtopic: [GSubtopic] @relation(name: "HAS_OBJECTIVES", direction: IN)
 }
 
 type Assignment {
-     name: String!
-     code: String
-     contenttype: String
-     solution: String
-     hint: String
-     branch: [GBranch] @relation(name: "HAS_ASSIGNMENT", direction: IN)
-     grandtopic: [GGrandtopic] @relation(name: "HAS_ASSIGNMENT", direction: IN)
-     topic: [GTopic] @relation(name: "HAS_ASSIGNMENT", direction: IN)
-     subtopic: [GSubtopic] @relation(name: "HAS_ASSIGNMENT", direction: IN)
+  name: String!
+  code: String
+  contenttype: String
+  solution: String
+  hint: String
+  branch: [GBranch] @relation(name: "HAS_ASSIGNMENT", direction: IN)
+  grandtopic: [GGrandtopic] @relation(name: "HAS_ASSIGNMENT", direction: IN)
+  topic: [GTopic] @relation(name: "HAS_ASSIGNMENT", direction: IN)
+  subtopic: [GSubtopic] @relation(name: "HAS_ASSIGNMENT", direction: IN)
 }
