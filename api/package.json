@@ -12,16 +12,18 @@
   "author": "William Lyon",
   "license": "MIT",
   "dependencies": {
-    "graphql": "^14.4.1",
     "apollo-boost": "^0.1.27",
     "apollo-cache-inmemory": "^1.4.2",
     "apollo-client": "^2.4.12",
+    "apollo-errors": "^1.9.0",
     "apollo-link-http": "^1.5.10",
     "apollo-server": "^2.3.3",
+    "aws-sdk": "^2.593.0",
     "dotenv": "^6.2.0",
+    "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
     "neo4j-driver": "^1.7.2",
-    "neo4j-graphql-js": "^2.3.0",
+    "neo4j-graphql-js": "^2.11.0",
     "node-fetch": "^2.3.0"
   },
   "devDependencies": {

@@ -3,6 +3,15 @@ import { ApolloServer } from "apollo-server";
 import { v1 as neo4j } from "neo4j-driver";
 import { makeAugmentedSchema } from "neo4j-graphql-js";
 import dotenv from "dotenv";
+import AWS from 'aws-sdk';
+AWS.config.update({
+  region: 'ap-south-1'
+});
+
+
+
+
+
 
 // set environment variables from ../.env
 dotenv.config();
@@ -16,7 +25,8 @@ dotenv.config();
  */
 
 const schema = makeAugmentedSchema({
-  typeDefs
+  typeDefs,
+  
 });
 
 /*
@@ -32,6 +42,26 @@ const driver = neo4j.driver(
   )
 );
 
+
+const middleware = async(req, res, next) => {
+  try {
+    const token = req.headers.authorization;
+    if (token) {
+      var params = {
+        AccessToken:token.replace('Bearer ', '')
+      };
+      var cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider();
+      const user = await cognitoidentityserviceprovider.getUser(params);
+      console.log(user);
+      next();
+    } else {
+      res.status(401).send({ message: 'You must supply a JWT for authorization!' });
+    }
+  } catch (error) {
+    res.status(401).send({ message: 'You must supply a JWT for authorization!' });
+  } 
+};
+
 /*
  * Create a new ApolloServer instance, serving the GraphQL schema
  * created using makeAugmentedSchema above and injecting the Neo4j driver
@@ -39,7 +69,16 @@ const driver = neo4j.driver(
  * generated resolvers to connect to the database.
  */
 const server = new ApolloServer({
-  context: { driver },
+  context: async ({ req,driver }) => {
+    const token = req.headers.authorization;
+    if(token){
+      
+    }
+   
+    return {
+      myProperty: true
+    };
+  },
   schema: schema,
   introspection: true, // enables introspection of the schema
   playground: true, // enables the actual playground
