@@ -26,7 +26,13 @@ dotenv.config();
 
 const schema = makeAugmentedSchema({
   typeDefs,
-  
+  // config: {
+  //   auth: {
+  //     isAuthenticated: true,
+  //     hasRole: true
+  //   }
+  // }
+
 });
 
 /*
@@ -43,12 +49,12 @@ const driver = neo4j.driver(
 );
 
 
-const middleware = async(req, res, next) => {
+const middleware = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
     if (token) {
       var params = {
-        AccessToken:token.replace('Bearer ', '')
+        AccessToken: token.replace('Bearer ', '')
       };
       var cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider();
       const user = await cognitoidentityserviceprovider.getUser(params);
@@ -59,7 +65,7 @@ const middleware = async(req, res, next) => {
     }
   } catch (error) {
     res.status(401).send({ message: 'You must supply a JWT for authorization!' });
-  } 
+  }
 };
 
 /*
@@ -69,12 +75,12 @@ const middleware = async(req, res, next) => {
  * generated resolvers to connect to the database.
  */
 const server = new ApolloServer({
-  context: async ({ req,driver }) => {
+  context: async ({ req, driver }) => {
     const token = req.headers.authorization;
-    if(token){
-      
+    if (token) {
+
     }
-   
+
     return {
       myProperty: true
     };

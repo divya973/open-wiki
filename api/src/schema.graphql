@@ -9,6 +9,19 @@ type GDepartment {
   grandtopics: [GGrandtopic] @relation(name: "IS_PARENT_OF", direction: OUT)
 }
 
+# type Movie @isAuthenticated {
+#   movieId: ID!
+#   title: String
+#   plot: String
+# }
+
+# enum Role {
+#   reader
+#   user
+#   admin
+# }
+#  @hasRole(roles:[admin]) 
+
 type GBranch {
   code: ID!
   name: String!

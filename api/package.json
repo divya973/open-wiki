@@ -21,6 +21,7 @@
     "aws-sdk": "^2.593.0",
     "dotenv": "^6.2.0",
     "graphql": "^14.5.8",
+    "graphql-auth-directives": "^2.2.0",
     "graphql-tag": "^2.10.1",
     "neo4j-driver": "^1.7.2",
     "neo4j-graphql-js": "^2.11.0",
