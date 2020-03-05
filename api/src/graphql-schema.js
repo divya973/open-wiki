@@ -7,6 +7,10 @@ import path from "path";
  * fallback to schema.graphql if GRAPHQL_SCHEMA environment variable is not set
  */
 
+// const typeDefs1 = `directive @isAuthenticated on QUERY | FIELD
+// directive @hasScope(scope: [String]) on QUERY | FIELD`
+
+
 export const typeDefs = fs
   .readFileSync(
     process.env.GRAPHQL_SCHEMA || path.join(__dirname, "schema.graphql")

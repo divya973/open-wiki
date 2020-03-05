@@ -1,11 +1,16 @@
 import { typeDefs } from "./graphql-schema";
-import { ApolloServer } from "apollo-server";
+// import { AuthDirective } from 'graphql-directive-auth';
+import express from "express";
+import bodyParser from "body-parser";
+import { ApolloServer } from "apollo-server-express";
 import { v1 as neo4j } from "neo4j-driver";
 import { makeAugmentedSchema } from "neo4j-graphql-js";
 import dotenv from "dotenv";
 import AWS from 'aws-sdk';
+const cors = require('cors')
 AWS.config.update({
-  region: 'ap-south-1'
+  region: 'ap-south-1',
+
 });
 
 
@@ -24,16 +29,17 @@ dotenv.config();
  * https://grandstack.io/docs/neo4j-graphql-js-api.html#makeaugmentedschemaoptions-graphqlschema
  */
 
+
+
 const schema = makeAugmentedSchema({
   typeDefs,
-  // config: {
-  //   auth: {
-  //     isAuthenticated: true,
-  //     hasRole: true
-  //   }
-  // }
-
+  config: {
+    auth: {
+      hasRole: true
+    }
+  }
 });
+
 
 /*
  * Create a Neo4j driver instance to connect to the database
@@ -48,25 +54,42 @@ const driver = neo4j.driver(
   )
 );
 
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
 
 const middleware = async (req, res, next) => {
   try {
-    const token = req.headers.authorization;
+    const token = req.headers.authorization || req.query.token;
     if (token) {
       var params = {
         AccessToken: token.replace('Bearer ', '')
       };
       var cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider();
-      const user = await cognitoidentityserviceprovider.getUser(params);
-      console.log(user);
-      next();
+      let userResponse = await new Promise((resolve, reject) => {
+        cognitoidentityserviceprovider.getUser(params, function (err, data) {
+          if (err) {
+            reject(err.stack);
+          }
+          else resolve(data)        // successful response
+        })
+      });
+      if (userResponse) {
+        console.log(userResponse);
+        next();
+      }
     } else {
       res.status(401).send({ message: 'You must supply a JWT for authorization!' });
     }
   } catch (error) {
+    console.log(error);
     res.status(401).send({ message: 'You must supply a JWT for authorization!' });
   }
 };
+
+
+app.use("*", middleware);
+
 
 /*
  * Create a new ApolloServer instance, serving the GraphQL schema
@@ -75,21 +98,16 @@ const middleware = async (req, res, next) => {
  * generated resolvers to connect to the database.
  */
 const server = new ApolloServer({
-  context: async ({ req, driver }) => {
-    const token = req.headers.authorization;
-    if (token) {
-
-    }
-
+  context: ({ req }) => {
     return {
-      myProperty: true
-    };
+      req: req,
+      driver
+    }
   },
   schema: schema,
   introspection: true, // enables introspection of the schema
   playground: true, // enables the actual playground
 });
 
-server.listen(process.env.GRAPHQL_LISTEN_PORT, "0.0.0.0").then(({ url }) => {
-  console.log(`GraphQL API ready at ${url}`);
-});
+server.applyMiddleware({ app, path: "/" });
+app.listen(process.env.GRAPHQL_LISTEN_PORT, "0.0.0.0");

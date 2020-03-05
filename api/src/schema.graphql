@@ -1,3 +1,4 @@
+
 type GDepartment {
   code: ID!
   name: String!
@@ -15,11 +16,11 @@ type GDepartment {
 #   plot: String
 # }
 
-# enum Role {
-#   reader
-#   user
-#   admin
-# }
+enum Role {
+  reader
+  user
+  admin
+}
 #  @hasRole(roles:[admin]) 
 
 type GBranch {
